@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <tiele>stock_input</tiele>
+</head>
+
+<body>
+    <form action="/stock_register" method="post">
+        <p>
+            ポートフォリオID：<input type="text" name="portfolio_id" maxlength="16" required>
+        </p>
+        <p>
+            証券コード：<input type="text" name="code" maxlength="16" required>
+        </p>
+        <p>
+            登録名称：<input type="text" name="name" maxlength="16" required>
+        </p>
+        <p>
+            <input type="submit" value="登録する">
+        </p>
+    </form>
+    <form action="/stock_review" method="post">
+        ポートフォリオの確認
+        <p>
+            ポートフォリオID：<input type="text" name="portfolio_id2" maxlength="16" required>
+        </p>
+        <p>
+            <input type="submit" value="ポートフォリオを表示する">
+        </p>
+    </form>
+    <form action="/" method="get">
+        <p>
+            <input type="submit" value="ホーム画面へ">
+        </p>
+    </form>
+</body>
+
+</html>

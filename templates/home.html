@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+
+<body>
+    <h1>Portfolio Automator</h1>
+    <p>ログイン完了！</p>
+    <p>ようこそ！{{userID}}さん</p>
+    <p>セッションIDは{{session}}です。</p>
+    <p>このサイトではポートフォリオの登録、バックテストができます</p>
+    <!-- <p>入力ページへの<a href="/input_page">リンク</a></p> -->
+    <p>株価データ登録ページへの<a href="/stock_page">リンク</a></p>
+    <form action="/logout" method="get">
+        <p>
+            <input type="submit" value="サインアウト">
+        </p>
+    </form>
+</body>
+
+</html>
