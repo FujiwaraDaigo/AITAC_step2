@@ -1,5 +1,4 @@
 import sqlite3
-import pandas as pd
 import hashlib
 import datetime
 import mysql.connector

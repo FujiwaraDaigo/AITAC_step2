@@ -1,10 +1,5 @@
-from unittest import result
-
-from numpy import record
 from flask import Flask, redirect, render_template, request
 from database import DataBase
-import user_checker
-import uuid
 import os
 
 from flask_login import (
