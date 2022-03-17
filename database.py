@@ -1,10 +1,8 @@
-import re
 import sqlite3
-from tkinter import HORIZONTAL
 import pandas as pd
 import hashlib
 import datetime
-from matplotlib.dates import date2num
+import mysql.connector
 
 
 class DataBase:

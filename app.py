@@ -3,7 +3,6 @@ from unittest import result
 from numpy import record
 from flask import Flask, redirect, render_template, request
 from database import DataBase
-import data_processor
 import user_checker
 import uuid
 import os
@@ -146,9 +145,9 @@ def edit():
     )
 
 
-@app.route("/excute_edit", methods=["POST"])
+@app.route("/execute_edit", methods=["POST"])
 @login_required
-def excute_edit():
+def execute_edit():
     user_id = current_user.id
     record_id = request.form.get("record_id")
     created_at = request.form.get("created_at")
