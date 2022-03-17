@@ -7,15 +7,21 @@
 </head>
 
 <body>
-    <form action="/" method="post">
+    <form action="/login_check" method="post">
+        <h1>ログイン</h1>
         <p>
-            ユーザーID：<input type="text" name="userID" maxlength="128" required>
+            ユーザーID：<input type="text" name="user_id" maxlength="128" required>
         </p>
         <p>
-            パスワード：<input type="text" name="password" maxlength="128" required>
+            パスワード：<input type="password" name="password" maxlength="128" required>
         </p>
         <p>
-            <input type="submit" value="サインイン">
+            <input type="submit" value="ログイン">
+        </p>
+    </form>
+    <form action="/signup" method="get">
+        <p>
+            <input type="submit" value="新規登録">
         </p>
     </form>
 </body>

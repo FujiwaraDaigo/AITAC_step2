@@ -1,5 +1,8 @@
+from unittest import result
+
+from numpy import record
 from flask import Flask, redirect, render_template, request
-import dataframe_io
+from database import DataBase
 import data_processor
 import user_checker
 import uuid
@@ -18,85 +21,149 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.urandom(24)
 login_manager = LoginManager()
 login_manager.init_app(app)
+database = DataBase(db="db.sqlite3")
 
-
+### ログイン機能###############################################
 class User(UserMixin):
-    def __init__(self, uid):
-        self.id = uid
+    def __init__(self, user_id):
+        self.id = user_id
+
+    # def get(self, uid):
+    #     return self.id
 
 
 # Cookieを持ってない人はログインページに強制的にリダイレクト
 @login_manager.unauthorized_handler
 def unauthorized_callback():
-    return redirect("/login")
-
-
-@app.route("/login")
-def login():
-    user = User(uuid.uuid4())  # ランダムなIDを発行する
-    login_user(user)  # ログイン
-    return render_template("login_form.html")
+    return redirect("/login_form")
 
 
 @login_manager.user_loader
-def load_user(uid):
-    return User(uid)
+def load_user(user_id):
+    return User(user_id=user_id)
+
+
+###↑↑↑######################################################
+
+
+@app.route("/login_form")
+def login_form():
+    return render_template("login_form.html")
+
+
+@app.route("/signup", methods=["GET"])
+def signup():
+    logout_user()
+    return render_template("signup.html")
+
+
+@app.route("/login_check", methods=["POST"])
+def login_check():
+    user_id = request.form.get("user_id")
+    password = request.form.get("password")
+    check_ok = database.check_user_password(user_id=user_id, password=password)
+    if check_ok == 1:
+        user = User(user_id=user_id)  # ランダムなIDを発行する
+        login_user(user)  # ログイン
+        return redirect("/")
+    elif check_ok == -1:
+        return render_template("login_failure.html", message="パスワード不一致")
+    else:
+        return render_template("login_failure.html", message="未登録")
+
+
+@app.route("/signin", methods=["POST"])
+def signin():
+    user_id = request.form.get("user_id")
+    password = request.form.get("password")
+    database.register_user(user_id=user_id, password=password)
+    return redirect("/login_form")
 
 
 @app.route("/logout", methods=["GET"])
+@login_required
 def logout():
     logout_user()
-    return redirect("/login")
+    return redirect("/login_form")
 
 
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def home():
-    session = current_user.id
-    userID = request.form.get("userID")
-    password = request.form.get("password")
-    check_ok = user_checker.user_password_check(userID, password)
-    if check_ok:
-        return render_template(
-            "home.html", title="home", session=session, userID=userID
-        )
-    else:
-        return render_template("login_failure.html")
+    user_id = current_user.id
+    return render_template("home.html", title="home", user_id=user_id)
 
 
-@app.route("/stock_page", methods=["GET"])
+@app.route("/register_kintai", methods=["POST"])
 @login_required
-def stock_form():
-    return render_template("stock.html")
+def register_kintai():
+    start_or_end = request.form.get("start_or_end")
+    user_id = current_user.id
 
-
-@app.route("/stock_register", methods=["POST"])
-@login_required
-def register_stock():
-    portfolio_id = request.form.get("portfolio_id")
-    code = request.form.get("code")
-    name = request.form.get("name")
-
-    df = dataframe_io.register_stock_data(code=code, name=name)
-    df = dataframe_io.load_stok_data(name=name)
-    image_path = data_processor.plot_price_transition(df, name)
-    dataframe_io.register_portfolio(
-        portfolio_id=portfolio_id, stock_name=name, image_path=image_path
+    database.register_kintai(
+        user_id=user_id, start_or_end=start_or_end, created_at="now"
     )
-    # image_path2 = data_processor.plot_candle(df)
 
-    return render_template("stock.html")
+    return redirect("/kintai_review")
 
 
-@app.route("/stock_review", methods=["POST"])
+@app.route("/kintai_review", methods=["GET"])
 @login_required
-def stock_review():
-    portfolio_id = request.form.get("portfolio_id2")
-    portfolio = dataframe_io.load_portfolio(portfolio_id=portfolio_id)
+def kintai_review():
+    user_id = current_user.id
+    kintai_info = database.load_kintai(user_id=user_id)
 
-    print(portfolio)
+    return render_template(
+        "kintai_review.html", user_id=user_id, kintai_info=kintai_info, record_id=-1
+    )
 
-    return render_template("stock_review.html", portfolio=portfolio)
+
+@app.route("/remove", methods=["POST"])
+@login_required
+def remove():
+    user_id = current_user.id
+    record_id = request.form.get("record_id")
+    database.remove_record(record_id=record_id)
+    kintai_info = database.load_kintai(user_id=user_id)
+
+    return render_template(
+        "kintai_review.html", user_id=user_id, kintai_info=kintai_info, record_id=-1
+    )
+
+
+@app.route("/edit", methods=["POST"])
+@login_required
+def edit():
+    user_id = current_user.id
+    record_id = request.form.get("record_id")
+    kintai_info = database.load_kintai(user_id=user_id)
+
+    return render_template(
+        "kintai_review.html",
+        user_id=user_id,
+        kintai_info=kintai_info,
+        record_id=record_id,
+    )
+
+
+@app.route("/excute_edit", methods=["POST"])
+@login_required
+def excute_edit():
+    user_id = current_user.id
+    record_id = request.form.get("record_id")
+    created_at = request.form.get("created_at")
+    start_or_end = request.form.get("start_or_end")
+    database.edit_record(
+        record_id=record_id, created_at=created_at, start_or_end=start_or_end
+    )
+    kintai_info = database.load_kintai(user_id=user_id)
+
+    return render_template(
+        "kintai_review.html",
+        user_id=user_id,
+        kintai_info=kintai_info,
+        record_id=-1,
+    )
 
 
 if __name__ == "__main__":

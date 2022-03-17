@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>kintai_review</title>
+</head>
+
+<body>
+    <h1>{{user_id}}さんの勤怠記録</h1>
+
+    <table border="1">
+        <tr>
+            <th>出退勤</th>
+            <th>日時</th>
+            <th></th>
+            <th></th>
+        </tr>
+        {% for kintai_record in kintai_info %}
+        {% if kintai_record[0]|int == record_id|int %}
+        <tr>
+            <!-- <td>{{kintai_record[0]}}</td> -->
+            <form action="/excute_edit" method="post">
+                <td>
+                    <!-- <form action="/excute_edit" method="post"> -->
+                    <div>
+                        <select name="start_or_end" required>
+                            {% if kintai_record[3] == "start" %}
+                            <option value="start">出勤</option>
+                            <option value="end">退勤</option>
+                            {% else %}
+                            <option value="end">退勤</option>
+                            <option value="start">出勤</option>
+                            {% endif %}
+                        </select>
+                        <!-- <input type="submit" value="変更"> -->
+                    </div>
+                    <!-- </form> -->
+                </td>
+                <td>
+                    <!-- <form action="/excute_edit" method="post"> -->
+                    <input type="text" name="created_at" value={{kintai_record[2]}}>
+                    <!-- <p>
+                        <input type="submit" value="変更">
+                    </p> -->
+                    <!-- </form> -->
+                </td>
+                <td>
+                    <!-- <form action="/excute_edit" method="post"> -->
+                    <input type="hidden" name="record_id" value={{kintai_record[0]}}>
+                    <p>
+                        <input type="submit" value="確定">
+                    </p>
+                    <!-- </form> -->
+                </td>
+            </form>
+            <td>
+                <form action="/remove" method="post">
+                    <input type="hidden" name="record_id" value={{kintai_record[0]}}>
+                    <p>
+                        <input type="submit" value="削除">
+                    </p>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <!-- <td>{{kintai_record[0]}}</td> -->
+            <td>{{"出勤" if kintai_record[3]=="start" else "退勤"}}</td>
+            <td>{{kintai_record[2]}}</td>
+            <td>
+                <form action="/edit" method="post">
+                    <input type="hidden" name="record_id" value={{kintai_record[0]}}>
+                    <p>
+                        <input type="submit" value="編集">
+                    </p>
+                </form>
+            </td>
+            <td>
+                <form action="/remove" method="post">
+                    <input type="hidden" name="record_id" value={{kintai_record[0]}}>
+                    <p>
+                        <input type="submit" value="削除">
+                    </p>
+                </form>
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+
+    </table>
+    <form action="/" method="get">
+        <p>
+            <input type="submit" value="ホーム画面へ">
+        </p>
+    </form>
+</body>
+
+</html>

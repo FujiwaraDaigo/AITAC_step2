@@ -8,20 +8,21 @@ if os.path.exists("db.sqlite3") and input() == "y":
 conn = sqlite3.connect("db.sqlite3")
 c = conn.cursor()
 
-# ポートフォリオテーブルの作成
+# ユーザーテーブルの作成
 c.execute(
-    """create table portfolio(
-        portfolio_id integer,
-        stock_name text NOT NULL,
-        image_path text NOT NULL
+    """create table user(
+        user_id integer NOT NULL,
+        password_hash text NOT NULL
     )"""
 )
 
 # ユーザーテーブルの作成
 c.execute(
-    """create table user(
-        user_id integer,
-        password text NOT NULL
+    """create table kintai(
+        record_id integer PRIMARY KEY AUTOINCREMENT,
+        user_id integer NOT NULL,
+        created_at text NOT NULL,
+        start_or_end text NOT NULL
     )"""
 )
 

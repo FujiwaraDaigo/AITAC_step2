@@ -7,13 +7,27 @@
 </head>
 
 <body>
-    <h1>Portfolio Automator</h1>
+    <h1>勤怠登録.com</h1>
     <p>ログイン完了！</p>
-    <p>ようこそ！{{userID}}さん</p>
-    <p>セッションIDは{{session}}です。</p>
-    <p>このサイトではポートフォリオの登録、バックテストができます</p>
+    <p>ようこそ！{{user_id}}さん</p>
+    <p>このサイトでは勤怠の登録ができます</p>
     <!-- <p>入力ページへの<a href="/input_page">リンク</a></p> -->
-    <p>株価データ登録ページへの<a href="/stock_page">リンク</a></p>
+    <form action="/register_kintai" method="post">
+        <div>
+            <select name="start_or_end" required>
+                <option value="">選択してください</option>
+                <option value="start">出勤</option>
+                <option value="end">退勤</option>
+            </select>
+
+            <input type="submit" value="出退勤登録する">
+        </div>
+    </form>
+    <form action="/kintai_review" method="get">
+        <p>
+            <input type="submit" value="勤怠記録閲覧&編集ページへ">
+        </p>
+    </form>
     <form action="/logout" method="get">
         <p>
             <input type="submit" value="サインアウト">

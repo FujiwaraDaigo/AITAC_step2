@@ -27,7 +27,7 @@ def plot_price_transition(df, name: str):
     # 最高値と最低値の間を塗りつぶす
     plt.fill_between(times, df["High"], df["Low"], alpha=0.2)
 
-    image_path = "./static/figure/stock_transition_" + name + ".png"
+    image_path = "./static/figure/kintai_transition_" + name + ".png"
     fig.savefig(image_path)
     return image_path
 
