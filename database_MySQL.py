@@ -6,7 +6,7 @@ import mysql.connector
 # DB接続情報
 def conn_db():
     conn = mysql.connector.connect(
-        host="172.31.0.235",  # localhostでもOK
+        host="192.168.5.129",  # localhostでもOK
         user="app_server",
         passwd="It@cstep2",
         db="app_database",
