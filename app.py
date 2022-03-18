@@ -1,5 +1,10 @@
 from flask import Flask, redirect, render_template, request
-from database import DataBase
+
+# MySQLを使う場合
+from database_MySQL import DataBase
+
+# sqlite3を使う場合
+# from database import DataBase
 import os
 
 from flask_login import (
