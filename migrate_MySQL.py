@@ -1,6 +1,7 @@
 import os
 import mysql.connector
 
+
 # DB接続情報
 def conn_db():
     conn = mysql.connector.connect(
@@ -15,9 +16,12 @@ def conn_db():
 conn = conn_db()
 c = conn.cursor()
 
-# テーブルの初期化
-c.execute("""drop table user""")
-c.execute("""drop table kintai""")
+print("Do you want to remove current database? (y/n)")
+if input() == "y" or input() == "Y":
+    # テーブルの初期化
+    c.execute("""drop table user""")
+    c.execute("""drop table kintai""")
+
 
 # ユーザーテーブルの作成
 c.execute(
